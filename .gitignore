@@ -1,3 +1,4 @@
 *.sh
 build/
 main
+.ycm_extra_conf.py
