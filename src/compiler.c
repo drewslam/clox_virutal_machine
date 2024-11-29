@@ -452,6 +452,9 @@ static void namedVariable(Token name, bool canAssign) {
         getOp = OP_GET_GLOBAL;
         setOp = OP_SET_GLOBAL;
     }
+    // Debugging output
+    printf("namedVariable: getOp=%d, setOp=%d, name=%.*s\n", getOp, setOp, name.length, name.start);
+
 
     if (canAssign && match(TOKEN_EQUAL)) {
         expression();
