@@ -18,8 +18,8 @@ typedef struct {
     CallFrame frames[FRAMES_MAX];
     int frameCount;
 
-    Chunk* chunk;
-    uint8_t* ip;
+    // Chunk* chunk;
+    // uint8_t* ip;
     Value stack[STACK_MAX];
     Value* stackTop;
     Table globals;

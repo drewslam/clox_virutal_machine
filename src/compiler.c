@@ -199,6 +199,7 @@ static void initCompiler(Compiler* compiler, FunctionType type) {
 
     Local* local = &current->locals[current->localCount++];
     local->depth = 0;
+    local->isCaptured = false;
     local->name.start = "";
     local->name.length = 0;
 }
@@ -318,6 +319,9 @@ static void declareVariable() {
 
     Token* name = &parser.previous;
     
+    // Debug test
+    printf("Declaring variable with name: %.*s\n", name->length, name->start);   
+
     for (int i = current->localCount - 1; i >= 0; i--) {
         Local* local = &current->locals[i];
         if (local->depth != -1 && local->depth < current->scopeDepth) {
@@ -787,5 +791,5 @@ ObjFunction* compile(const char* source) {
     }
 
     ObjFunction* function = endCompiler();
-   return parser.hadError ? NULL : function;
+    return parser.hadError ? NULL : function;
 }
