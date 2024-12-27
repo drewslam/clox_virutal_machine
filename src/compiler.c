@@ -4,6 +4,7 @@
 
 #include "common.h"
 #include "compiler.h"
+#include "memory.h"
 #include "scanner.h"
 
 #ifndef DEBUG_PRINT_CODE
@@ -318,9 +319,6 @@ static void declareVariable() {
 
     Token* name = &parser.previous;
     
-    // Debug test
-    printf("Declaring variable with name: %.*s\n", name->length, name->start);   
-
     for (int i = current->localCount - 1; i >= 0; i--) {
         Local* local = &current->locals[i];
         if (local->depth != -1 && local->depth < current->scopeDepth) {
@@ -455,9 +453,6 @@ static void namedVariable(Token name, bool canAssign) {
         getOp = OP_GET_GLOBAL;
         setOp = OP_SET_GLOBAL;
     }
-    // Debugging output
-    printf("namedVariable: getOp=%d, setOp=%d, name=%.*s\n", getOp, setOp, name.length, name.start);
-
 
     if (canAssign && match(TOKEN_EQUAL)) {
         expression();
@@ -791,4 +786,12 @@ ObjFunction* compile(const char* source) {
 
     ObjFunction* function = endCompiler();
     return parser.hadError ? NULL : function;
+}
+
+void markCompilerRoots() {
+    Compiler* compiler = current;
+    while (compiler != NULL) {
+        markObject((Obj*)compiler->function);
+        compiler = compiler->enclosing;
+    }
 }
