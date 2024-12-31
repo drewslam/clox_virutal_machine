@@ -72,6 +72,11 @@ static void blackenObject(Obj* object) {
 #endif
 
     switch (object->type) {
+        case OBJ_BOUND_METHOD:
+            ObjBoundMethod* bound = (ObjBoundMethod*)object;
+            markValue(bound->receiver);
+            markObject((Obj*)bound->method);
+            break;
         case OBJ_CLASS: {
             ObjClass* klass = (ObjClass*)object;
             markObject((Obj*)klass->name);
@@ -113,6 +118,9 @@ static void freeObject(Obj* object) {
 #endif
 
     switch (object->type) {
+        case OBJ_BOUND_METHOD:
+            FREE(ObjBoundMethod, object);
+            break;
         case OBJ_CLASS: {
             ObjClass* klass = (ObjClass*)object;
             freeTable(&klass->methods);
@@ -213,7 +221,7 @@ void collectGarbage() {
 
 #ifdef DEBUG_LOG_GC
     printf("-- gc end\n");
-    printf("   collected %zu bytes (from %zu to %zu) nexxt at %zu\n", before - vm.bytesAllocated, before, vm.bytesAllocated, vm.nextGC);
+    printf("   collected %zu bytes (from %zu to %zu) next at %zu\n", before - vm.bytesAllocated, before, vm.bytesAllocated, vm.nextGC);
 #endif
 }
 
